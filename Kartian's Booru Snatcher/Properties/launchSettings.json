@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Kartian's Booru Snatcher (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Kartian's Booru Snatcher (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
