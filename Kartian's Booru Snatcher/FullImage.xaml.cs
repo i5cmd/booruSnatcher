@@ -14,6 +14,8 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics;
+using Windows.Media.Core;
+using Windows.Media.Effects;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,16 +29,49 @@ namespace Kartian_s_Booru_Snatcher
         {
             InitializeComponent();
 
+            image = clickedImg;
+
             this.AppWindow.MoveAndResize(new RectInt32
             {
-                Height = 500,
-                Width = 750
+                Height = 700,
+                Width = 950
             });
 
-            Img.Source = new BitmapImage(new Uri(clickedImg.FileUrl));
+            if (clickedImg.FileUrl.EndsWith(".mp4") || clickedImg.FileUrl.EndsWith(".mov") || clickedImg.FileUrl.EndsWith(".webm"))
+            {
+                Vid.Visibility = Visibility.Visible;
+                Vid.Source = MediaSource.CreateFromUri(new Uri(clickedImg.FileUrl));
+            }
+            else
+            {
+                Vid.Visibility = Visibility.Collapsed;
+                Img.Source = new BitmapImage(new Uri(clickedImg.FileUrl));
+            }
             TagsText.Text = "Tags: " + clickedImg.PostTags;
-            SourceText.Content = "Source: " + clickedImg.SourceUrl;
-            SourceText.NavigateUri = new Uri(clickedImg.SourceUrl);
+            
+            if (clickedImg.SourceUrl.Trim() == "")
+            {
+                return;
+            }
+            else
+            {
+                SourceText.Content = "Source: " + clickedImg.SourceUrl;
+                SourceText.NavigateUri = new Uri(clickedImg.SourceUrl);
+            }
+        }
+
+        private void DownloadButton_Click(object sender, RoutedEventArgs e)
+        {
+
+            string fileName = image.PostTags;
+            if (fileName.Length > 100)
+            {
+                fileName.Substring(fileName.Length - 100);
+            }
+            using (var client = new System.Net.WebClient())
+            {
+                client.DownloadFile(image.FileUrl, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", Path.GetFileName(image.FileUrl)));
+            }
         }
     }
 }

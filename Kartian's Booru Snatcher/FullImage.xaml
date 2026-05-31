@@ -19,10 +19,11 @@
             <ColumnDefinition Width="250"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Image Grid.Column="0" x:Name="Img" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"></Image>
+        <MediaPlayerElement x:Name="Vid" Grid.Column="0" MaxWidth="400" AutoPlay="False" AreTransportControlsEnabled="True" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"></MediaPlayerElement>
         <StackPanel Grid.Column="1">
             <TextBlock x:Name="TagsText" TextWrapping="Wrap" Margin="10"></TextBlock>
             <HyperlinkButton x:Name="SourceText" Margin="10"></HyperlinkButton>
-            <HyperlinkButton x:Name="DownloadButton" Content="Download file (in progress)" Margin="10"></HyperlinkButton>
+            <HyperlinkButton x:Name="DownloadButton" Content="Download file (in progress)" Margin="10" Click="DownloadButton_Click"></HyperlinkButton>
         </StackPanel>
     </Grid>
 </Window>

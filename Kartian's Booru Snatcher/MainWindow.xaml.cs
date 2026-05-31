@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography.X509Certificates;
 using Windows.Foundation;
@@ -18,18 +19,15 @@ using Windows.Foundation.Collections;
 using Windows.Graphics;
 using Windows.Security.Cryptography.Core;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace Kartian_s_Booru_Snatcher
 {
-    /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class MainWindow : Window
     {
         public ObservableCollection<ImageData> imageDatas { get; set; } = new ObservableCollection<ImageData>();
+        public bool SettingsOpen = false;
         private int page = 0;
+        public BooruConfiguration currentConfig;
+        public bool DialogOpen = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -45,16 +43,45 @@ namespace Kartian_s_Booru_Snatcher
             appPresenter.IsMaximizable = false;
         }
 
+        public async void ShowDialog(string message, string title)
+        {
+            if (DialogOpen) return;
+            DialogOpen = true;
+            ContentDialog dialog = new ContentDialog();
+
+            dialog.XamlRoot = this.Content.XamlRoot;
+            dialog.Title = title;
+            dialog.Content = message;
+            dialog.CloseButtonText = "Ok";
+            
+            await dialog.ShowAsync();
+            DialogOpen = false;
+        }
+
         private async void Snatch()
         {
             Buttons.Children.Clear();
             string[] tags = TagsTextBox.Text.Split(" ");
             page = 0;
             Snatching snatching = new Snatching();
-            snatching.Declaration("https://safebooru.org/");
-            List<ImageData> datas = await snatching.RetrieveImages(tags, "undefined", page, 200);
+            if (currentConfig == null)
+            {
+                ShowDialog("No configuration activated. Activate the configuration first.", "Configuration error");
+                return;
+            }
+            else
+            {
+                snatching.link = currentConfig.Url;
+            }
+            snatching.Declaration();
+            SnatchingResult datas = await snatching.RetrieveImages(tags, page, 50, currentConfig, this);
+            if (datas.ErrorTitle != null)
+            {
+                ShowDialog(datas.ErrorDescription, datas.ErrorTitle);
+                return;
+            }
             imageDatas.Clear();
-            foreach (var el in datas)
+            foreach (var el in datas.Images)
             {
                 imageDatas.Add(el);
             }
@@ -70,9 +97,15 @@ namespace Kartian_s_Booru_Snatcher
             page++;
             string[] tags = TagsTextBox.Text.Split(" ");
             Snatching snatching = new Snatching();
-            snatching.Declaration("https://safebooru.org/");
-            List<ImageData> datas = await snatching.RetrieveImages(tags, "undefined", page, 200);
-            foreach (var el in datas)
+            snatching.link = currentConfig.Url;
+            snatching.Declaration();
+            SnatchingResult datas = await snatching.RetrieveImages(tags, page, 50, currentConfig, this);
+            if (datas.ErrorTitle != null)
+            {
+                ShowDialog(datas.ErrorDescription, datas.ErrorTitle);
+                return;
+            }
+            foreach (var el in datas.Images)
             {
                 imageDatas.Add(el);
             }
@@ -97,6 +130,21 @@ namespace Kartian_s_Booru_Snatcher
                 FullImage fullImageWindows = new FullImage(clickedItem);
                 fullImageWindows.Activate();
             }
+        }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            if (!SettingsOpen)
+            {
+                SettingsOpen = true;
+                BooruConfig booruConfigWindow = new BooruConfig(this);
+                booruConfigWindow.Activate();
+            }
+        }
+
+        public void ChangeUsedConfigText(string configTitle, string configEngine)
+        {
+            UsingConfigAboutText.Text = $"Using: {configTitle}, {configEngine}";
         }
     }
 }

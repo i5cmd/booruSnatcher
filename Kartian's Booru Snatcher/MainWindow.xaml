@@ -16,13 +16,16 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <TextBox PlaceholderText="Tags..." Margin="20 10" x:Name="TagsTextBox" VerticalAlignment="Center" Width="600"></TextBox>
-            <Button Content="Snatch!" Click="Button_Click" VerticalAlignment="Center"></Button>
+        <TextBlock x:Name="UsingConfigAboutText" FontSize="12" FontWeight="Light" Text="Using: No configuration set" Margin="5 0 0 0"></TextBlock>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <AppBarButton Icon="Setting" Width="40" Height="50" Margin="5 2 0 5" VerticalAlignment="Center" LabelPosition="Collapsed" Click="Settings_Click"></AppBarButton>
+            <TextBox PlaceholderText="Tags..." Margin="5 2 8 5" x:Name="TagsTextBox" VerticalAlignment="Center" Width="600"></TextBox>
+            <Button Content="Snatch!" Click="Button_Click" VerticalAlignment="Center" Margin="0 2 0 5"></Button>
         </StackPanel>
-        <GridView Grid.Row="1" x:Name="Images" ItemsSource="{x:Bind imageDatas}" ShowsScrollingPlaceholders="True" IsItemClickEnabled="True" ItemClick="Images_ItemClick">
+        <GridView Grid.Row="2" x:Name="Images" ItemsSource="{x:Bind imageDatas}" ShowsScrollingPlaceholders="True" IsItemClickEnabled="True" ItemClick="Images_ItemClick">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="local:ImageData">
                     <Image Stretch="UniformToFill" Source="{x:Bind SampleUrl}" Width="100" Height="100" Tag="{x:Bind PostId}"></Image>
