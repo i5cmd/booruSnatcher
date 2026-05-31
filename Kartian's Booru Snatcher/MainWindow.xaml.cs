@@ -1,3 +1,4 @@
+using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -14,6 +15,7 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.Json;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics;
@@ -41,6 +43,10 @@ namespace Kartian_s_Booru_Snatcher
             var appPresenter = this.AppWindow.Presenter as OverlappedPresenter;
             appPresenter.IsResizable = false;
             appPresenter.IsMaximizable = false;
+
+            this.AppWindow.SetIcon(@"Assets\app_icon.ico");
+
+            LoadJsonButDiff();
         }
 
         public async void ShowDialog(string message, string title)
@@ -146,5 +152,40 @@ namespace Kartian_s_Booru_Snatcher
         {
             UsingConfigAboutText.Text = $"Using: {configTitle}, {configEngine}";
         }
+
+        private void SetupConfigSwitch(ObservableCollection<BooruConfiguration> config)
+        {
+            switchConfig.Items.Clear();
+            foreach (var el in config)
+            {
+                MenuFlyoutItem menuBarItem = new MenuFlyoutItem();
+                menuBarItem.Text = el.Name;
+                menuBarItem.Click += (sender, e) =>
+                {
+                    currentConfig = el;
+                    ChangeUsedConfigText(el.Name, el.Engine.ToString());
+                };
+                switchConfig.Items.Add(menuBarItem);
+            }
+        }
+        public void LoadJsonButDiff()
+        {
+            string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string myAppFolder = Path.Combine(localAppData, "Kartian's Booru Snatcher");
+            Directory.CreateDirectory(myAppFolder);
+            string file = Path.Combine(myAppFolder, "booruconfigurations.json");
+            if (File.Exists(file))
+            {
+                string fileContent = File.ReadAllText(file);
+                ObservableCollection<BooruConfiguration> configs = JsonSerializer.Deserialize<ObservableCollection<BooruConfiguration>>(fileContent);
+                SetupConfigSwitch(configs);
+            }
+            else
+            {
+                ObservableCollection<BooruConfiguration> configs = new ObservableCollection<BooruConfiguration>();
+                SetupConfigSwitch(configs);
+            }
+        }
+
     }
 }

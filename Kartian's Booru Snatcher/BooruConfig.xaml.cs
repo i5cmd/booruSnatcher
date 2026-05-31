@@ -54,6 +54,9 @@ namespace Kartian_s_Booru_Snatcher
             var appWindowPresenter = this.AppWindow.Presenter as OverlappedPresenter;
             appWindowPresenter.IsResizable = false;
             appWindowPresenter.IsMaximizable = false;
+
+            this.AppWindow.SetIcon(@"Assets\app_icon.ico");
+
             LoadJson();
 
         }
@@ -68,6 +71,7 @@ namespace Kartian_s_Booru_Snatcher
             BooruConfiguration toDelete = (BooruConfiguration)button.DataContext;
             configs.Remove(toDelete);
             SaveJson();
+            window.LoadJsonButDiff();
         }
         private void UseConfig_Click(object sender, RoutedEventArgs e)
         {
@@ -111,6 +115,7 @@ namespace Kartian_s_Booru_Snatcher
             config.UserId = UserId.Text;
             configs.Add(config);
             SaveJson();
+            window.LoadJsonButDiff();
         }
 
         public void SaveJson()

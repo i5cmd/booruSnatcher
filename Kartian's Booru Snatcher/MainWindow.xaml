@@ -21,7 +21,15 @@
         </Grid.RowDefinitions>
         <TextBlock x:Name="UsingConfigAboutText" FontSize="12" FontWeight="Light" Text="Using: No configuration set" Margin="5 0 0 0"></TextBlock>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <AppBarButton Icon="Setting" Width="40" Height="50" Margin="5 2 0 5" VerticalAlignment="Center" LabelPosition="Collapsed" Click="Settings_Click"></AppBarButton>
+            <AppBarButton Icon="Setting" Width="40" Height="50" Margin="5 2 0 5" VerticalAlignment="Center" LabelPosition="Collapsed">
+                <AppBarButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="Options"></MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Booru configurations" Click="Settings_Click"></MenuFlyoutItem>
+                        <MenuFlyoutSubItem Text="Switch configuration" x:Name="switchConfig"></MenuFlyoutSubItem>
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
             <TextBox PlaceholderText="Tags..." Margin="5 2 8 5" x:Name="TagsTextBox" VerticalAlignment="Center" Width="600"></TextBox>
             <Button Content="Snatch!" Click="Button_Click" VerticalAlignment="Center" Margin="0 2 0 5"></Button>
         </StackPanel>
