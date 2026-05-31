@@ -3,4 +3,4 @@ To do:
 - favorite tags,
 - downloading to x and NSFW Autofilter (with an option to turn it off),
 - mass downloading
-- better booru support (implementing Playwright library for bypassing Cloudflare secured boorus)
+- better booru support (implementing Playwright library for bypassing Cloudflare secured boorus. yeahhh i don't know how to do that at all lol)
